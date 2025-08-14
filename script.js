@@ -36,6 +36,33 @@ function setInitialTheme() {
 themeToggle.addEventListener('click', toggleTheme);
 historyToggle.addEventListener('click', toggleHistoryPanel);
 
+// Smart Parentheses Handler
+function handleParentheses() {
+    const openParens = (currentDisplay.match(/\(/g) || []).length;
+    const closeParens = (currentDisplay.match(/\)/g) || []).length;
+    
+    // If we're at the start or after an operator, add opening parenthesis
+    if (currentDisplay === '0' || resetScreen) {
+        appendToDisplay('(');
+    }
+    // If last character is a number and we need to multiply
+    else if (/[\d)]$/.test(currentDisplay)) {
+        if (openParens > closeParens) {
+            appendToDisplay(')');
+        } else {
+            appendToDisplay('*(');
+        }
+    }
+    // If we have unmatched opening parentheses, add closing
+    else if (openParens > closeParens) {
+        appendToDisplay(')');
+    }
+    // Otherwise add opening parenthesis
+    else {
+        appendToDisplay('(');
+    }
+}
+
 // Calculator Functions
 function updateDisplay() {
     display.textContent = currentDisplay;
@@ -43,7 +70,7 @@ function updateDisplay() {
 
 function appendToDisplay(value) {
     // If we have a previous answer and user presses an operator
-    if (previousAnswer !== null && ['+', '-', '*', '/'].includes(value)) {
+    if (previousAnswer !== null && ['+', '-', '*', '/', '('].includes(value)) {
         currentDisplay = previousAnswer + value;
         previousAnswer = null;
         resetScreen = false;
@@ -57,7 +84,10 @@ function appendToDisplay(value) {
     }
     
     // Prevent multiple decimals
-    if (value === '.' && currentDisplay.includes('.')) return;
+    if (value === '.' && currentDisplay.includes('.') && 
+        !currentDisplay.match(/\.\d*$/)) {
+        return;
+    }
     
     // Prevent operators at start (except minus for negative numbers)
     if (['+', '*', '/', ')'].includes(value) && currentDisplay === '') return;
@@ -87,9 +117,8 @@ function clearDisplay() {
 }
 
 function calculate() {
-    // Check for empty expression
-    if (currentDisplay === '') {
-        showError('Invalid expression');
+    // Don't add empty calculations to history
+    if (currentDisplay === '0' || currentDisplay === '') {
         return;
     }
     
@@ -112,7 +141,9 @@ function calculate() {
     try {
         // Replace × with * for evaluation
         const expression = currentDisplay.replace(/×/g, '*');
-        result = eval(expression);
+        // Add implicit multiplication between numbers and parentheses
+        const processedExpression = expression.replace(/(\d)(\()/g, '$1*$2');
+        result = eval(processedExpression);
         
         // Handle division by zero
         if (!isFinite(result)) {
@@ -229,7 +260,7 @@ document.addEventListener('keydown', (event) => {
     } else if (key === 'Backspace') {
         deleteLastChar();
     } else if (key === '(' || key === ')') {
-        appendToDisplay(key);
+        handleParentheses();
     }
 });
 
