@@ -3,13 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Calculator</title>
+    <title>Advanced Calculator</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 </head>
-<body>
+<body class="light-theme">
     <div class="calculator">
-        <div class="display" id="display">0</div>
+        <div class="header">
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="history-toggle" id="historyToggle">
+                <i class="fas fa-history"></i>
+            </button>
+        </div>
+        
+        <div class="display-container">
+            <div class="history-display" id="historyDisplay"></div>
+            <div class="display" id="display">0</div>
+        </div>
+        
         <div class="buttons">
             <button class="btn operator" onclick="clearDisplay()">C</button>
             <button class="btn operator" onclick="appendToDisplay('(')">(</button>
@@ -34,6 +48,16 @@
             <button class="btn zero" onclick="appendToDisplay('0')">0</button>
             <button class="btn" onclick="appendToDisplay('.')">.</button>
             <button class="btn operator equals" onclick="calculate()">=</button>
+        </div>
+        
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <h3>History</h3>
+                <button class="clear-history" onclick="clearHistory()">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+            <div class="history-items" id="historyItems"></div>
         </div>
     </div>
     <script src="script.js"></script>
