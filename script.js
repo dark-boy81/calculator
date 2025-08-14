@@ -275,10 +275,21 @@ document.addEventListener('click', (event) => {
 
 // Telegram Web App detection
 if (window.Telegram && window.Telegram.WebApp) {
-    document.body.classList.add('telegram');
+    // Expand the web app to full view
     Telegram.WebApp.expand();
     
-    // Adjust for Telegram's header
-    document.documentElement.style.setProperty('--tg-header-height', '60px');
-    document.body.style.paddingTop = 'var(--tg-header-height)';
+    // Set background color to match theme
+    Telegram.WebApp.setBackgroundColor('#1e2b3a');
+    
+    // Handle theme changes from Telegram
+    Telegram.WebApp.onEvent('themeChanged', () => {
+        const isDark = Telegram.WebApp.colorScheme === 'dark';
+        document.body.classList.toggle('dark-theme', isDark);
+        document.body.classList.toggle('light-theme', !isDark);
+    });
+    
+    // Initialize with current theme
+    const isDark = Telegram.WebApp.colorScheme === 'dark';
+    document.body.classList.toggle('dark-theme', isDark);
+    document.body.classList.toggle('light-theme', !isDark);
 }
