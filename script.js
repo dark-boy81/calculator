@@ -16,6 +16,21 @@ const historyToggle = document.getElementById('historyToggle');
 // Initialize calculator
 updateDisplay();
 renderHistory();
+setInitialTheme();
+
+// Set initial theme based on preference
+function setInitialTheme() {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (prefersDark) {
+        document.body.classList.add('dark-theme');
+        document.body.classList.remove('light-theme');
+        themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+    } else {
+        document.body.classList.add('light-theme');
+        document.body.classList.remove('dark-theme');
+        themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+    }
+}
 
 // Event Listeners
 themeToggle.addEventListener('click', toggleTheme);
@@ -171,6 +186,10 @@ function toggleTheme() {
 // Panel Functions
 function toggleHistoryPanel() {
     historyPanel.classList.toggle('active');
+    // Close keyboard on mobile when history opens
+    if (historyPanel.classList.contains('active')) {
+        display.blur();
+    }
 }
 
 // Keyboard Support
@@ -202,3 +221,13 @@ document.addEventListener('click', (event) => {
         historyPanel.classList.remove('active');
     }
 });
+
+// Telegram Web App detection
+if (window.Telegram && window.Telegram.WebApp) {
+    document.body.classList.add('telegram');
+    Telegram.WebApp.expand();
+    
+    // Adjust for Telegram's header
+    document.documentElement.style.setProperty('--tg-header-height', '60px');
+    document.body.style.paddingTop = 'var(--tg-header-height)';
+}
