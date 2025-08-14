@@ -60,5 +60,12 @@ document.addEventListener('keydown', (event) => {
     }
 });
 
+if (window.Telegram && window.Telegram.WebApp) {
+    // Running in Telegram
+    document.body.classList.add('telegram');
+    Telegram.WebApp.expand();
+}
+
 // Initialize display
+
 updateDisplay();
