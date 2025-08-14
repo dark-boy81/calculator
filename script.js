@@ -1,6 +1,6 @@
 // Calculator State
 let currentDisplay = '0';
-let previousDisplay = '';
+let previousAnswer = null;
 let operation = null;
 let resetScreen = false;
 let calculationHistory = JSON.parse(localStorage.getItem('calculatorHistory')) || [];
@@ -42,6 +42,15 @@ function updateDisplay() {
 }
 
 function appendToDisplay(value) {
+    // If we have a previous answer and user presses an operator
+    if (previousAnswer !== null && ['+', '-', '*', '/'].includes(value)) {
+        currentDisplay = previousAnswer + value;
+        previousAnswer = null;
+        resetScreen = false;
+        updateDisplay();
+        return;
+    }
+    
     if (currentDisplay === '0' || resetScreen) {
         currentDisplay = '';
         resetScreen = false;
@@ -60,9 +69,18 @@ function appendToDisplay(value) {
     updateDisplay();
 }
 
+function deleteLastChar() {
+    if (currentDisplay.length === 1) {
+        currentDisplay = '0';
+    } else {
+        currentDisplay = currentDisplay.slice(0, -1);
+    }
+    updateDisplay();
+}
+
 function clearDisplay() {
     currentDisplay = '0';
-    previousDisplay = '';
+    previousAnswer = null;
     operation = null;
     updateDisplay();
     historyDisplay.textContent = '';
@@ -103,6 +121,9 @@ function calculate() {
         
         // Format result
         result = parseFloat(result.toFixed(10)).toString();
+        
+        // Store the answer for future operations
+        previousAnswer = result;
         
         // Add to history
         addToHistory(currentDisplay, result);
@@ -160,6 +181,7 @@ function renderHistory() {
         
         historyItem.addEventListener('click', () => {
             currentDisplay = item.expression;
+            previousAnswer = item.result;
             updateDisplay();
             toggleHistoryPanel();
         });
@@ -205,9 +227,7 @@ document.addEventListener('keydown', (event) => {
     } else if (key === 'Escape') {
         clearDisplay();
     } else if (key === 'Backspace') {
-        currentDisplay = currentDisplay.slice(0, -1);
-        if (currentDisplay === '') currentDisplay = '0';
-        updateDisplay();
+        deleteLastChar();
     } else if (key === '(' || key === ')') {
         appendToDisplay(key);
     }
