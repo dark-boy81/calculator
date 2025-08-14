@@ -158,10 +158,10 @@ body.dark-theme .operator {
 
 .history-display {
     padding: 5px 20px;
-    text-align: right;
+    text-align: left;
     font-size: 0.9rem;
     color: #7f8c8d;
-    height: 20px;
+    height: 25px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -185,6 +185,10 @@ body.dark-theme .operator {
     cursor: pointer;
     background-color: var(--light-btn-bg);
     font-weight: 500;
+    aspect-ratio: 1/1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn:active {
@@ -195,16 +199,21 @@ body.dark-theme .operator {
     background-color: var(--light-operator-color);
     color: white;
     font-weight: 600;
+    font-size: 1.3rem;
 }
 
 .equals {
     background-color: var(--light-equals-color);
     color: white;
     font-weight: 600;
+    grid-row: span 2;
+    aspect-ratio: 1/1;
+    height: auto;
 }
 
 .zero {
     grid-column: span 2;
+    aspect-ratio: 2/1;
 }
 
 /* History Panel */
@@ -315,6 +324,11 @@ body.dark-theme .operator {
 @media (max-width: 400px) {
     .btn {
         padding: 15px;
+        font-size: 1.1rem;
+    }
+    
+    .operator {
+        font-size: 1.2rem;
     }
     
     .display {
